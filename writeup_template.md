@@ -112,7 +112,7 @@ class Camera(object):
 It uses pictures of chessboards provided in camera_cal directory to calibrate the camera (compute distortion coeffiecients which are use to _undistort_ images.)
 
 Sample image looks like this:
-![calibrated_chessboard][https://github.com/Sarunas-Girdenas/finding-lanes-2nd-project/blob/master/chessboard.png]
+![calibrated_chessboard](https://github.com/Sarunas-Girdenas/finding-lanes-2nd-project/blob/master/chessboard.png)
 
 
 ### Pipeline (single images)
