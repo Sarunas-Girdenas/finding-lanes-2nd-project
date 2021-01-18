@@ -134,35 +134,22 @@ Sample output (on the _undistorted_ picture):
 
 ![combined_threshold](https://github.com/Sarunas-Girdenas/finding-lanes-2nd-project/blob/master/colors.png)
 
-#### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
+#### 3. Perspective Transform
 
-The code for my perspective transform includes a function called `warper()`, which appears in lines 1 through 8 in the file `example.py` (output_images/examples/example.py) (or, for example, in the 3rd code cell of the IPython notebook).  The `warper()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
-
-```python
-src = np.float32(
-    [[(img_size[0] / 2) - 55, img_size[1] / 2 + 100],
-    [((img_size[0] / 6) - 10), img_size[1]],
-    [(img_size[0] * 5 / 6) + 60, img_size[1]],
-    [(img_size[0] / 2 + 55), img_size[1] / 2 + 100]])
-dst = np.float32(
-    [[(img_size[0] / 4), 0],
-    [(img_size[0] / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), img_size[1]],
-    [(img_size[0] * 3 / 4), 0]])
-```
+I've wrapped perspective transformer into `PerspectiveTransform()` class in the code. As you can see, there are 2 options in the class. First, we use some rule-of-thumb to find the mapping between source and destination image. For the source image, it ust divides the width by 2 and takes 62% of the height. For the source, we take 100 (arbitrary number). However, this did not work well at all on the video output. Hence I've hardcoded the following coordinates:
 
 This resulted in the following source and destination points:
 
 | Source        | Destination   | 
 |:-------------:|:-------------:| 
-| 585, 460      | 320, 0        | 
-| 203, 720      | 320, 720      |
-| 1127, 720     | 960, 720      |
-| 695, 460      | 960, 0        |
+| 280, 700      | 250, 720      | 
+| 595, 460      | 250, 0        |
+| 725, 460      | 1065, 0       |
+| 1125, 700     | 1065, 720     |
 
-I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
+After applying `PerspectiveTransform.transform_perspective()` on a _undistorted_ and _thresholded_ picture, we get this:
 
-![alt text][image4]
+![perspective](https://github.com/Sarunas-Girdenas/finding-lanes-2nd-project/blob/master/perspective.png)
 
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 
@@ -186,7 +173,7 @@ I implemented this step in lines # through # in my code in `yet_another_file.py`
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
-Here's a [link to my video result](./project_video.mp4)
+Here's a [link to my video result](https://github.com/Sarunas-Girdenas/finding-lanes-2nd-project/blob/master/colors.png)
 
 ---
 
