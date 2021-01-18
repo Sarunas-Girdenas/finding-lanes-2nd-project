@@ -17,16 +17,6 @@ The goals / steps of this project are the following:
 * Warp the detected lane boundaries back onto the original image.
 * Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position.
 
-[//]: # (Image References)
-
-[image1]: ./examples/undistort_output.png "Undistorted"
-[image2]: ./test_images/test1.jpg "Road Transformed"
-[image3]: ./examples/binary_combo_example.jpg "Binary Example"
-[image4]: ./examples/warped_straight_lines.jpg "Warp Example"
-[image5]: ./examples/color_fit_lines.jpg "Fit Visual"
-[image6]: ./examples/example_output.jpg "Output"
-[video1]: ./project_video.mp4 "Video"
-
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
 
 ### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
@@ -43,13 +33,87 @@ You're reading it!
 
 #### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
 
-The code for this step is contained in the first code cell of the IPython notebook located in "./examples/example.ipynb" (or in lines # through # of the file called `some_file.py`).  
+The code for this step is contained in the first code cell of the IPython notebook located in "P2.ipynb".
 
 I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
 
-I then used the output `objpoints` and `imgpoints` to compute the camera calibration and distortion coefficients using the `cv2.calibrateCamera()` function.  I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result: 
+I then used the output `objpoints` and `imgpoints` to compute the camera calibration and distortion coefficients using the `cv2.calibrateCamera()` function.  I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result:
 
-![alt text][image1]
+I've wrapped _Camera_ as a class for easier use:
+
+```
+class Camera(object):
+    """
+    Camera that we use to take pictures/.
+    """
+    
+    def __init__(self, num_x_corners=9, num_y_corners=6, location='camera_cal'):
+        """
+        Camera constructor
+        """
+        
+        self.calibrated = False
+        self.num_x_corners = num_x_corners
+        self.num_y_corners = num_y_corners
+        self.location = location
+        
+        # object points
+        self.objp = np.zeros((num_x_corners * num_y_corners, 3), np.float32)
+        self.objp[:, :2] = np.mgrid[0:num_x_corners, 0:num_y_corners].T.reshape(-1, 2)
+        
+        return None
+    
+    def calibrate(self):
+        """
+        Calibrates camera given pictures
+        """
+        
+        # 3D points in real-world space
+        object_points = []
+        # 2D image points
+        image_points = []
+        
+        # load pictures for calibration
+        for img in glob.glob(f"{self.location}/*"):
+            # find corners
+            image = cv2.imread(img)
+            gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+            
+            ret, corners = cv2.findChessboardCorners(gray, (self.num_x_corners, self.num_y_corners), None)
+            
+            if ret:
+                object_points.append(self.objp)
+                image_points.append(corners)
+        
+        # calibrate camera!
+        # gray.shape[::-1] - picture size
+        ret, self.mtx, self.dist, rvecs, tvecs = cv2.calibrateCamera(
+                object_points, image_points, gray.shape[::-1],
+                None, None
+            )
+        
+        self.calibrated = True
+        
+        return None
+    
+    def undistort_picture(self, picture):
+        """
+        Fixes picture given camera is calibrated
+        """
+        
+        if not self.calibrated:
+            raise ValueError("Run camera.calibrate() first!")
+        
+        undistorted = cv2.undistort(picture, self.mtx, self.dist, None, self.mtx)
+        
+        return undistorted
+```
+
+It uses pictures of chessboards provided in camera_cal directory to calibrate the camera (compute distortion coeffiecients which are use to _undistort_ images.)
+
+Sample image looks like this:
+![calibrated_chessboard][./chessboard.png]
+
 
 ### Pipeline (single images)
 
