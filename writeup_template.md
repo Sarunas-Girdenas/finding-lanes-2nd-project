@@ -109,24 +109,30 @@ class Camera(object):
         return undistorted
 ```
 
-It uses pictures of chessboards provided in camera_cal directory to calibrate the camera (compute distortion coeffiecients which are use to _undistort_ images.)
-
-Sample image looks like this:
-![calibrated_chessboard](https://github.com/Sarunas-Girdenas/finding-lanes-2nd-project/blob/master/chessboard.png)
+It uses pictures of chessboards provided in camera_cal directory to calibrate the camera (compute distortion coeffiecients which are use to _undistort_ images.
 
 
 ### Pipeline (single images)
 
-#### 1. Provide an example of a distortion-corrected image.
+#### 1. Example of corrected image (from the _Camera_ class)
 
-To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
-![alt text][image2]
+Sample image after _undistortion_:
+![calibrated_chessboard](https://github.com/Sarunas-Girdenas/finding-lanes-2nd-project/blob/master/chessboard.png)
 
-#### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
+#### 2. Color Transforms and Gradients
 
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines # through # in `another_file.py`).  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
+I've used in total 4 different transforms (these functions are taken from Exercises):
+1. `abs_sobel_thresh()` - compute direction gradient 
+2. `mag_threshold()` - compute gradient magnitude (how big is the change of colours between nearby pixels)
+3. `dir_threshold()` - compute gradient direction
+4. `hls_select()` - converts picture to HLS color space and choose S channel (as the most informative one)
+5. `apply_thresholds()` - combines all the above functions
 
-![alt text][image3]
+This is wrapped in the class called `CombineTresholds()` in the notebook.
+
+Sample output (on the _undistorted_ picture):
+
+![combined_threshold](https://github.com/Sarunas-Girdenas/finding-lanes-2nd-project/blob/master/colors.png)
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
