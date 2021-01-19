@@ -153,19 +153,19 @@ After applying `PerspectiveTransform.transform_perspective()` on a _undistorted_
 
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 
-Then I did some other stuff and fit my lane lines with a 2nd order polynomial kinda like this:
+As suggested in the course, I've used the histogram approach. The idea is to compute histogram (sum) of pixels along the height of the picture. The location with the largest sum suggests the position of the lane. This is performed in the `FindLanes()` class. Function `FindLanes.find_lanes()` takes binary warped image, calculates histogram and fits the 2nd degree polynomial on the newly found lane points.
 
-![alt text][image5]
+![perspective](https://github.com/Sarunas-Girdenas/finding-lanes-2nd-project/blob/master/lanes0.png)
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-I did this in lines # through # in my code in `my_other_file.py`
+In the same `FindLanes()` class I've added the function `measure_lane_curvature()`. I've hardcoded meters per pixel (as suggested in the exercises). Function `distance_from_camera()` calculates vehicle position with respect to center (calculating how far the lanes are from the horizontal midpoint of the picture assuming that camera is in the middle of the car).
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-I implemented this step in lines # through # in my code in `yet_another_file.py` in the function `map_lane()`.  Here is an example of my result on a test image:
+Function `FindLanes.draw_lanes_on_image()` draws back the newly inferred lanes:
 
-![alt text][image6]
+Here's a [link to my video result](https://github.com/Sarunas-Girdenas/finding-lanes-2nd-project/blob/master/fin_lanes.png)
 
 ---
 
@@ -173,7 +173,7 @@ I implemented this step in lines # through # in my code in `yet_another_file.py`
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
-Here's a [link to my video result](https://github.com/Sarunas-Girdenas/finding-lanes-2nd-project/blob/master/colors.png)
+Here's a [link to my video result](https://github.com/Sarunas-Girdenas/finding-lanes-2nd-project/blob/master/challenge_video.mp4)
 
 ---
 
@@ -181,4 +181,8 @@ Here's a [link to my video result](https://github.com/Sarunas-Girdenas/finding-l
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+Firstly, I have not tested what happens if the other car drives in front. Such case would break the pipeline because it would interfere with our algorithm that assumes that there are no obstructions in the way. That is, we use various thresholds (colours and shapes) to extract lanes, but having car in front most certainly would pose a challenge to this approach as we would be detecting car shape.
+
+Secondly, I have not considered the case where one lane dissapears (due to ongoing roadworks for instance). In such case perhaps we should drive using just the one (visible) lane, but that would be dangerous.
+
+Thirdly, same as in the first project, in this case lane estimates still appear a bit "jumpy" and uneven, especially when car wobbles a bit on the road. I would need to implement some kind of smoothing to hopefully reduce that. 
