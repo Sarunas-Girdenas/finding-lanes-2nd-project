@@ -165,7 +165,7 @@ In the same `FindLanes()` class I've added the function `measure_lane_curvature(
 
 Function `FindLanes.draw_lanes_on_image()` draws back the newly inferred lanes:
 
-Here's a [link to my video result](https://github.com/Sarunas-Girdenas/finding-lanes-2nd-project/blob/master/fin_lanes.png)
+![fin](https://github.com/Sarunas-Girdenas/finding-lanes-2nd-project/blob/master/fin_lanes.png)
 
 ---
 
